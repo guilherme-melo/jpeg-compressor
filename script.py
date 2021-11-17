@@ -311,6 +311,7 @@ def dequantization(image):
 
 """File-Encoder"""
 
+
 if __name__ == '__main__':
     files = os.listdir("images")
     compressed_files = []
@@ -318,10 +319,15 @@ if __name__ == '__main__':
         name=file.split(".")
         image = cv2.imread("images/"+file)
         y,u,v= rgb_to_yuv(image)
+        orig_shape = y.shape
         u=np.delete(u,list(range(0,u.shape[0],2)),axis=0)
         v=np.delete(v,list(range(0,v.shape[0],2)),axis=0)   
         u=np.repeat(u, 2, axis=0)
         v=np.repeat(v, 2, axis=0)
+        if y.shape[0] %2 != 0:
+            y = np.delete(y, -1, axis=0)
+        y.shape
+        #u = u.reshape(orig_shape)
         im = yuv_to_rgb(y,u,v)
         im_encoded = encode_dct(im,8,8)
         im_quantized = quantization(im_encoded)
